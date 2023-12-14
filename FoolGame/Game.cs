@@ -1,13 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using FoolGame.entities;
+using FoolGame.Properties;
+using FoolGame.Utils;
 
 namespace FoolGame
 {
     public class Game
     {
-        public int currentMove;
         private List<Player> players = new List<Player>();
+        private Stack<Card> currentStack = new Stack<Card>();
+        private bool gameIsOver;
+        private int currentMove;
         private Card trumpCard;
+
+        public List<Player> Players => players;
+        public Stack<Card> CurrentStack => currentStack;
+        public bool GameIsOver => GameIsFinished();
+        public int CurrentMove => currentMove;
+        public Card TrumpCard => trumpCard;
 
         public void StartGame(int playerCounts)
         {
@@ -16,41 +28,109 @@ namespace FoolGame
 
             DeckOfCard.ShuffleDeck();
             SetPlayers(playerCounts);
-            trumpCard = DeckOfCard.GetCardFromDeck();
+            trumpCard = DeckOfCard.GetCardsFromDeck(1)[0];
             currentMove = SetFirstMove();
         }
 
 
-        public void Move(Card card)
+        public void Move(Suit suit, Value value)
         {
-            players[currentMove].Move(card);
-            SetNextMove();
+            if (currentStack.Count == 0)
+            {
+                Move(currentMove, suit, value);
+                return;
+            }
+
+            foreach (var card in currentStack)
+            {
+                if (card.value == value)
+                {
+                    Move(currentMove, suit, value);
+                    return;
+                }
+            }
+
+            throw new Exception();
         }
 
-        private void SetNextMove()
+        public void MoveBack(Suit suit, Value value)
         {
-            if (currentMove + 1 > players.Count)
-                currentMove = 0;
-            else
-                currentMove++;
+            if ((currentStack.Peek().suit == suit && currentStack.Peek().value < value)
+                || (currentStack.Peek().suit != trumpCard.suit && trumpCard.suit == suit))
+            {
+                Move(GetNextPlayersMove(), suit, value);
+                return;
+            }
+
+            throw new Exception();
+        }
+
+        private void Move(int currentMove, Suit suit, Value value)
+        {
+            players[currentMove].Move(suit, value);
+            currentStack.Push(new Card(suit, value));
+        }
+
+        public int GetNextPlayersMove()
+        {
+            if (currentMove + 1 > players.Count - 1)
+                return 0;
+            return currentMove + 1;
+        }
+
+        public void SetNextMove(string constants = null, int step = 1)
+        {
+            FillMissingCards(constants);
+            for (int i = 0; i < step; i++)
+            {
+                currentMove = GetNextPlayersMove();
+            }
+        }
+
+        private void FillMissingCards(string constants = null)
+        {
+            if (constants == Constants.TAKE_CARDS)
+            {
+                int currentPlayer = GetNextPlayersMove();
+                foreach (var card in currentStack)
+                {
+                    players[currentPlayer].cards.Add(card);
+                }
+            }
+
+            foreach (var player in players)
+            {
+                if (player.cards.Count < 6)
+                {
+                    foreach (var card in DeckOfCard.GetCardsFromDeck(6 - player.cards.Count))
+                    {
+                        player.cards.Add(card);
+                    }
+                }
+            }
         }
 
         private int SetFirstMove()
         {
-            int currentMin = Int32.MaxValue;
-            int i = 0;
+            Value currentMinValue = Value.ACE;
+            int i = -1;
+            int firstMove = -1;
             foreach (var player in players)
             {
                 i++;
-                foreach (var keyValuePair in player.cards)
+                foreach (var card in player.cards)
                 {
-                    if (keyValuePair.Value.suit == trumpCard.suit && keyValuePair.Value.value < currentMin)
-                        currentMin = i;
+                    if (card.suit == trumpCard.suit && card.value < currentMinValue)
+                    {
+                        currentMinValue = card.value;
+                        firstMove = i;
+                    }
                 }
             }
 
-            return currentMin;
+            return firstMove;
         }
+
 
         private void SetPlayers(int playerCounts)
         {
@@ -59,6 +139,19 @@ namespace FoolGame
             {
                 players.Add(new Player(DeckOfCard.GetCardsFromDeck(6)));
             }
+        }
+
+        private bool GameIsFinished()
+        {
+            if (DeckOfCard.GetDeckOfCard().Count == 0)
+            {
+                foreach (var player in players)
+                {
+                    if (player.cards.Count == 0)
+                        return true;
+                }
+            }
+            return false;
         }
     }
 }

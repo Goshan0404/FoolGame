@@ -1,31 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FoolGame.entities;
+using FoolGame.Properties;
 
 namespace FoolGame
 {
     public class Player
     {
-        private int cardsCounts;
-        public Dictionary<Card, Card> cards;
+        public List<Card> cards;
         bool isInGame;
 
-        public Player(Dictionary<Card, Card> cards)
+        public Player(List<Card> cards)
         {
             this.cards = cards;
         }
 
-        public void Move(Card card)
+        public bool Move(Suit suit, Value value)
         {
-            if (cards.ContainsKey(card))
+            foreach (var currentCard in cards)
             {
-                cards.Remove(card);
-                cardsCounts--;
+                if (currentCard.suit == suit && currentCard.value == value)
+                {
+                    cards.Remove(currentCard);
+                    return true;
+                }
             }
-            else
-            {
-                throw new ArgumentException();
-            }
+            return false;
         }
     }
     

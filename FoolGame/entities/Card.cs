@@ -1,13 +1,14 @@
-﻿using FoolGame.Properties;
+﻿using FoolGame.entities;
+using FoolGame.Properties;
 
 namespace FoolGame
 {
     public  class Card
     {
         public readonly Suit suit;
-        public readonly int value;
+        public readonly Value value;
 
-        public Card(Suit suit, int value)
+        public Card(Suit suit, Value value)
         {
             this.suit = suit;
             this.value = value;
@@ -15,7 +16,7 @@ namespace FoolGame
 
         public override string ToString()
         {
-            return suit + " " + value;
+            return value + " of " + suit;
         }
     }
 }

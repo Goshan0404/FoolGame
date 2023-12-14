@@ -1,0 +1,7 @@
+C:\Users\chern\Projects\RiderProjects\FoolGame\FoolGame\bin\Debug\FoolGame.exe
+C:\Users\chern\Projects\RiderProjects\FoolGame\FoolGame\bin\Debug\FoolGame.pdb
+C:\Users\chern\Projects\RiderProjects\FoolGame\FoolGame\obj\Debug\FoolGame.csproj.AssemblyReference.cache
+C:\Users\chern\Projects\RiderProjects\FoolGame\FoolGame\obj\Debug\FoolGame.csproj.SuggestedBindingRedirects.cache
+C:\Users\chern\Projects\RiderProjects\FoolGame\FoolGame\obj\Debug\FoolGame.csproj.CoreCompileInputs.cache
+C:\Users\chern\Projects\RiderProjects\FoolGame\FoolGame\obj\Debug\FoolGame.exe
+C:\Users\chern\Projects\RiderProjects\FoolGame\FoolGame\obj\Debug\FoolGame.pdb
